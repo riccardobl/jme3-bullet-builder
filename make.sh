@@ -242,7 +242,7 @@ function travis {
         DEPLOY="true"  #Deploy only on tags
     fi
     
-    BINTRAY_VERSION="$REPO_NAME-$BRANCH-$VERSION"
+    BINTRAY_VERSION="$VERSION"
    # BINTRAY_SNAPSHOT="$REPO_NAME-$BRANCH-SNAPSHOT"
 
     echo "Run travis $1"
