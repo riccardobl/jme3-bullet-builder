@@ -1,5 +1,5 @@
 #!/bin/bash
-REPO_NAME="jmonkeyengine"
+GITHUB_USERNAME="jmonkeyengine"
 BRANCH="master"
 ROOT_MAKESH_GITHUB_USER="riccardobl"
 
