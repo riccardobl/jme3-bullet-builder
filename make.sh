@@ -3,9 +3,9 @@
 # License: CC0 1.0 (https://creativecommons.org/publicdomain/zero/1.0/)
 
 # Configurations
-if [ "$REPO_NAME" == "" ];
+if [ "$GITHUB_USERNAME" == "" ];
 then
-    REPO_NAME="riccardobl"
+    GITHUB_USERNAME="riccardobl"
 fi
 if [ "$GROUP" == "" ];
 then
@@ -23,7 +23,7 @@ fi
 ###########################
 ###########################
 # Init
-REPO="https://github.com/$REPO_NAME/jmonkeyengine.git"
+REPO="https://github.com/$GITHUB_USERNAME/jmonkeyengine.git"
 DEPLOY="false" 
 JDK_ROOT="$JAVA_HOME"
 READ_LINK="readlink"
