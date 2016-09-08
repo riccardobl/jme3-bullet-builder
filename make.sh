@@ -1,6 +1,6 @@
 #!/bin/bash
-REPO_NAME="jmonkeyengine"
-BRANCH="master"
+GITHUB_USERNAME="riccardobl"
+BRANCH="frk"
 ROOT_MAKESH_GITHUB_USER="riccardobl"
 
 rm -Rf root_tmp
