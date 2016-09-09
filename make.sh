@@ -151,7 +151,7 @@ function buildLinux {
       -Ibuild/bullet/src/
       -I$JDK_ROOT/include
       -I$JDK_ROOT/include/linux
-      -Ibuild/tmp/jmonkeyengine/jme3-bullet-native/src/native/cpp -pthread
+      -Ibuild/tmp/jmonkeyengine/jme3-bullet-native/src/native/cpp
       $(cat  build/tmp/IIlist.txt) 
       $(cat build/tmp/cpplist.txt)
        -Wl,-soname,bulletjme.so -o $OUT_PATH/libbulletjme.so  -lrt"
