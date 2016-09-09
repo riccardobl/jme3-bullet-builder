@@ -2,6 +2,7 @@
 GITHUB_USERNAME="riccardobl"
 BRANCH="frk"
 ROOT_MAKESH_GITHUB_USER="riccardobl"
+DEBUG="1"
 
 rm -Rf root_tmp
 mkdir -p root_tmp
