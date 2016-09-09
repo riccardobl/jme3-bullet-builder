@@ -143,7 +143,7 @@ function buildLinux {
     args="-Ofast "
     if [ "$DEBUG" == "1" ];
     then
-        args="-g -O0"
+        args="-g -O1"
     fi
 
     build_script="
@@ -173,7 +173,7 @@ function buildWindows {
     args="-Ofast "
     if [ "$DEBUG" == "1" ];
     then
-        args="-g -O0"
+        args="-g -O1"
     fi
 
 
@@ -204,7 +204,7 @@ function buildMac {
     args="-Ofast "
     if [ "$DEBUG" == "1" ];
     then
-        args="-g -O0"
+        args="-g -O1"
     fi
     
     build_script="
