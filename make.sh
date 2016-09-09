@@ -19,7 +19,10 @@ if [ "$VERSION" == "" ];
 then
     VERSION="1.0"
 fi
-
+if [ "$DEBUG" == "" ];
+then
+    DEBUG="0"
+fi
 ###########################
 ###########################
 # Init
@@ -136,8 +139,15 @@ function buildLinux {
         arch_flag="-m32"
     fi
     findCppFiles
+
+    args="-Ofast "
+    if [ "$DEBUG" == "1" ];
+    then
+        args="-g"
+    fi
+
     build_script="
-    g++ -mtune=generic -DBT_NO_PROFILE=1 -fpermissive -U_FORTIFY_SOURCE -fPIC -Ofast  $arch_flag -shared
+    g++ -mtune=generic -DBT_NO_PROFILE=1 -fpermissive -U_FORTIFY_SOURCE $args  -fPIC  $arch_flag -shared
       -Ibuild/bullet/src/
       -I$JDK_ROOT/include
       -I$JDK_ROOT/include/linux
@@ -159,8 +169,16 @@ function buildWindows {
         compiler="i686-w64-mingw32-g++"
     fi
     findCppFiles
+
+    args="-Ofast "
+    if [ "$DEBUG" == "1" ];
+    then
+        args="-g"
+    fi
+
+
     build_script="
-    $compiler -mtune=generic -DBT_NO_PROFILE=1 -fpermissive -fPIC   -U_FORTIFY_SOURCE -Ofast  -DWIN32  -shared -static
+    $compiler -mtune=generic -DBT_NO_PROFILE=1 -fpermissive -fPIC   -U_FORTIFY_SOURCE $args  -DWIN32  -shared -static
        -Ibuild/bullet/src/
        -I$JDK_ROOT/include
        -Ibuild/tmp/jmonkeyengine/jme3-bullet-native/src/native/cpp/fake_win32
@@ -182,8 +200,15 @@ function buildMac {
         arch_flag="-arch i386"
     fi
     findCppFiles
+
+    args="-Ofast "
+    if [ "$DEBUG" == "1" ];
+    then
+        args="-g"
+    fi
+    
     build_script="
-    g++ -mtune=generic -DBT_NO_PROFILE=1 -fpermissive $arch_flag -U_FORTIFY_SOURCE -fPIC -Ofast   -shared
+    g++ -mtune=generic -DBT_NO_PROFILE=1 -fpermissive $arch_flag -U_FORTIFY_SOURCE -fPIC $args   -shared
         -Ibuild/bullet/src/
       -Ibuild/tmp/jmonkeyengine/jme3-bullet-native/src/native/cpp 
             -I$JDK_ROOT/Headers/
