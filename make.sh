@@ -1,6 +1,6 @@
 #!/bin/bash
-GITHUB_USERNAME="riccardobl"
-BRANCH="frk"
+GITHUB_USERNAME="jmonkeyengine"
+BRANCH="master"
 ROOT_MAKESH_GITHUB_USER="riccardobl"
 DEBUG="1"
 
