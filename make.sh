@@ -184,7 +184,7 @@ function buildWindows {
     $compiler $arch_flag -mtune=generic -DBT_NO_PROFILE=1 -fpermissive -fPIC   -U_FORTIFY_SOURCE $args  -DWIN32  -shared
        -Ibuild/bullet/src/
        -I$JDK_ROOT/include
-       -Iwin
+       -Ibuild/tmp/win
        -Ibuild/tmp/jmonkeyengine/jme3-bullet-native/src/native/cpp  -static
        $(cat  build/tmp/IIlist.txt) 
       $(cat build/tmp/cpplist.txt) -Wp,-w 
@@ -379,6 +379,10 @@ function main(){
         git checkout $BRANCH
         cd ../../
     fi
+    mkdir -p build/tmp/win
+    wget https://raw.githubusercontent.com/riccardobl/jme3-bullet-builder/root/win/jni_md.h -O build/tmp/win/jni_md.h
+    wget https://raw.githubusercontent.com/riccardobl/jme3-bullet-builder/root/win/jawt_md.h -O build/tmp/win/jawt_md.h
+
     cp -Rf build/jmonkeyengine build/tmp/jmonkeyengine 
 
     clr_magenta "Run $1..."
