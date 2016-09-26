@@ -164,8 +164,11 @@ function buildWindows {
     setPlatformArch "windows" $1
     clr_green "Compile for $PLATFORM $ARCH..."
     compiler="x86_64-w64-mingw32-g++"
+    arch_flag="-DWIN64" 
+    # "-m64"
     if [ "$1" = "x86" ];
     then
+        arch_flag=""
         compiler="i686-w64-mingw32-g++"
     fi
     findCppFiles
@@ -178,14 +181,14 @@ function buildWindows {
 
 
     build_script="
-    $compiler -mtune=generic -DBT_NO_PROFILE=1 -fpermissive -fPIC   -U_FORTIFY_SOURCE $args  -DWIN32  -shared -static
+    $compiler $arch_flag -mtune=generic -DBT_NO_PROFILE=1 -fpermissive -fPIC   -U_FORTIFY_SOURCE $args  -DWIN32  -shared
        -Ibuild/bullet/src/
        -I$JDK_ROOT/include
-       -Ibuild/tmp/jmonkeyengine/jme3-bullet-native/src/native/cpp/fake_win32
-       -Ibuild/tmp/jmonkeyengine/jme3-bullet-native/src/native/cpp        
+       -Iwin
+       -Ibuild/tmp/jmonkeyengine/jme3-bullet-native/src/native/cpp  -static
        $(cat  build/tmp/IIlist.txt) 
       $(cat build/tmp/cpplist.txt) -Wp,-w 
-       -Wl,--exclude-all-symbols,-soname,bulletjme.dll  -o $OUT_PATH/bulletjme.dll"
+       -Wl,--exclude-all-symbols,--add-stdcall-alias,--kill-at,-soname,bulletjme.dll  -o $OUT_PATH/bulletjme.dll"
     clr_escape "$(echo $build_script)" $CLR_BOLD $CLR_BLUE
     $build_script
     if [ $? -ne 0 ]; then exit 1; fi
