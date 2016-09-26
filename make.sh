@@ -230,7 +230,7 @@ function buildWindows32 {
     buildWindows "x86"   
 }
 function buildWindows64 {
-    buildWindows "x86-64"   
+    buildWindows "x86_64"   
 }
 function buildMac32 {
     buildMac "x86"   
