@@ -380,8 +380,9 @@ function main(){
         cd ../../
     fi
     mkdir -p build/tmp/win
-    wget https://raw.githubusercontent.com/riccardobl/jme3-bullet-builder/root/win/jni_md.h -O build/tmp/win/jni_md.h
-    wget https://raw.githubusercontent.com/riccardobl/jme3-bullet-builder/root/win/jawt_md.h -O build/tmp/win/jawt_md.h
+    cp -Rf win/* build/tmp/win/
+    #wget https://raw.githubusercontent.com/riccardobl/jme3-bullet-builder/root/win/jni_md.h -O build/tmp/win/jni_md.h
+    #wget https://raw.githubusercontent.com/riccardobl/jme3-bullet-builder/root/win/jawt_md.h -O build/tmp/win/jawt_md.h
 
     cp -Rf build/jmonkeyengine build/tmp/jmonkeyengine 
 
