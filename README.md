@@ -1,8 +1,8 @@
 # JMonkeyEngine Bullet builder
 Automatic build of [JMonkeyEngine bullet bindings](https://github.com/jMonkeyEngine/jmonkeyengine) with travis.
 
-##Access to the latest builds
-###Gradle
+## Access to the latest builds
+### Gradle
 <big><pre>
 repositories { 
   maven { 
@@ -16,9 +16,9 @@ dependencies {
 
 `$VERSION` has to be replaced with a tag chosen from the list below
 
-###Versions (from newer to older)
+### Versions (from newer to older)
 
-####Official [master](https://github.com/jMonkeyEngine/jmonkeyengine) (3.2)
+#### Official [master](https://github.com/jMonkeyEngine/jmonkeyengine) (3.2)
 
 `jmonkeyengine-master-3.2c`
 
@@ -26,7 +26,7 @@ dependencies {
 
 `jmonkeyengine-master-3.2a`
 
-####Official [master](https://github.com/jMonkeyEngine/jmonkeyengine) (3.2) -debug
+#### Official [master](https://github.com/jMonkeyEngine/jmonkeyengine) (3.2) -debug
 
 `jmonkeyengine-master-3.2c-debug`
 
@@ -39,6 +39,6 @@ Note: the `-debug` builds are compiled with less optimization and debugging info
 
 
 
-###Bintray repo
+### Bintray repo
 https://bintray.com/riccardo/jme3-bullet-native/jme3-bullet-native
 
