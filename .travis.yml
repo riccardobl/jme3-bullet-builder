@@ -1,0 +1,27 @@
+sudo: required
+language: java
+dist: mega
+os:
+- linux
+- osx
+notifications:
+  email: true
+script:
+- ./make.sh 
+before_install:
+- if [ "$TRAVIS_OS_NAME" = "linux" ]; then sudo apt-get -qq update ; fi
+- if [ "$TRAVIS_OS_NAME" = "linux" ]; then sudo apt-get install -y wget unzip  ".*-mingw-w64-.*"
+  gcc-multilib build-essential gcc-multilib g++-multilib ;fi
+- if [ "$TRAVIS_OS_NAME" = "osx" ]; then  brew update  ;fi
+- if [ "$TRAVIS_OS_NAME" = "osx" ]; then  brew tap caskroom/cask ; fi
+- if [ "$TRAVIS_OS_NAME" = "osx" ]; then  brew cask install java ; fi
+- if [ "$TRAVIS_OS_NAME" = "osx" ]; then  brew install coreutils ; fi
+after_success:
+- ./make.sh deploy
+env:
+  global:
+  - BUILD_WINDOWS: "true"
+  - BUILD_LINUX: "true"
+  - BUILD_MAC: "true"
+  - BINTRAY_USER: riccardo
+  - secure: svG4ATHGZ85Zo3PnKAw9kHPGVOylwmNjR62YtuY3EUZH2GKE66+EYYdHxnk0FTBo1bG+lpPFpOllMF42M7zGkz8tWsvWHZp+dkq50ORly6C8c7waHsEXOmb2DyN5R4gcYiT1l8kv9MS2mvAogw7fI77qhqoh1Bt5/YbsYAJlnWLrIDYgYV+ZDBPbqtzHxM2ngPeU/FmD4QHhO/6pB5AzDjFoj5BkenwtE2NaaJRRGMn+Mu8JHXMjHVk5nf62ec4BWKhgIyoa2UHHOXb8u4+NV8QlSUyMIY9U4XX536Nj5xJo4vNwAsI0HE6br+PBEPseCQ7kbURbVD8bM1hqRJQ964iluN8mzqDzNlbxNuJkX8AFzXaa2RaZ4V1sHZuMAI6YyjF4Deg4VIrR/oKi5P6rHWqD02VGLpcj1JwumoBxAQpKDSNISxhWqNwEh4hXsTt7AkL8cYj02hyIihl9hhHgUz8OsJthtzTVj3lSLvTqeq7w+QME7RrAlk8/T6hcW53Q5TEE4ehC3vPPFFrEriIKC8N1CROTGdE3EeLoYmssbiUkIL8sFSeGB7HoRlP/lcqzM2t58+h/5XwolpdIpS4UIQd3s1jslIs1NbL3DgTnxqvomK4DO0tZv+X85fHQLHljh6+CvwGSwD2DzuF5j84F2UqeBNLOZIrz52IRBWTintc=
