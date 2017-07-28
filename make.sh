@@ -1,6 +1,34 @@
 #!/bin/bash
 # Author: Riccardo Balbo
-# License: CC0 1.0 (https://creativecommons.org/publicdomain/zero/1.0/)
+# License: 
+# Copyright (c) 2017, Riccardo Balbo
+# All rights reserved.
+# 
+# Redistribution and use in source and binary forms, with or without modification, 
+# are permitted provided that the following conditions are met:
+# 
+# 1. Redistributions of source code must retain the above copyright notice, this 
+# list of conditions and the following disclaimer.
+# 
+# 2. Redistributions in binary form must reproduce the above copyright notice, 
+# this list of conditions and the following disclaimer in the documentation 
+# and/or other materials provided with the distribution.
+# 
+# 3. Neither the name of the copyright holder nor the names of its contributors 
+# may be used to endorse or promote products derived from this software 
+# without specific prior written permission.
+# 
+# THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+# AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+# IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
+# ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE
+# LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL 
+# DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF 
+# SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS 
+# INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER 
+# IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING 
+# IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF 
+# THE POSSIBILITY OF SUCH DAMAGE.
 
 # Configurations
 source thirdparty/bash_colors.sh
@@ -65,6 +93,13 @@ function findCppFiles { #Find .cpp and header paths that need to be passed to g+
     find  build/tmp/bullet/src/LinearMath -type d  >> build/tmp/Ilist.txt
     find  build/tmp/bullet/src/clew -type d  >> build/tmp/Ilist.txt
     find  build/tmp/bullet/src/Bullet3Common -type d  >> build/tmp/Ilist.txt
+
+
+    # For <=2.82
+    #find  build/tmp/bullet/src/vectormath -type f -name '*.cpp' >> build/tmp/cpplist.txt
+    #find  build/tmp/bullet/src/vectormath -type d  >> build/tmp/Ilist.txt
+    #find  build/tmp/bullet/src/BulletMultiThreaded -type f -name '*.cpp' >> build/tmp/cpplist.txt
+    #find  build/tmp/bullet/src/BulletMultiThreaded  -type d  >> build/tmp/Ilist.txt
     
     for line in $(cat  build/tmp/Ilist.txt); do
         echo "-I$line " >>  build/tmp/IIlist.txt
@@ -260,6 +295,8 @@ function main {
             unzip -q build/$bulletUrlHash.zip -d  build/tmp/ext
             mv build/tmp/ext/* build/tmp/bullet
 
+    
+
          
             if [ "$TRAVIS_OS_NAME" = "linux" -o "$OS_NAME" = "linux" ];
             then
@@ -306,7 +343,7 @@ function main {
         then
             exit 0
         fi
-        
+
         rm -Rf deploy
         mkdir -p deploy/
 
@@ -335,6 +372,8 @@ function main {
                 exit 0
             fi
         fi
+
+        export DEPLOY="2"
         
         # Download linux & windows builds
         if [ "$BINTRAY_USER" = "" ];
@@ -365,6 +404,9 @@ function main {
         # Merge both builds together
         tar -xzf deploy/tmpl.tar.gz -C build/lib/
         tar -xzf deploy/tmpm.tar.gz -C build/lib/
+
+        echo "" > deploy/deploy_list.txt
+
         #Build jar
         for target in "${BUILD_LIST[@]}"
         do
@@ -377,6 +419,9 @@ function main {
             then
                 export SUB_VERSION="$SUB_VERSION-debug"
             fi
+            
+            echo "$SUB_VERSION" >> deploy/deploy_list.txt
+
 
             if [ "$BINTRAY_USER" = "" ];
             then

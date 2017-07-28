@@ -1,0 +1,409 @@
+<!DOCTYPE html>
+<html lang="en-US">
+<head>
+    <title>JME3 Bullet builder: Automatic up to date builds of bullet for JMonkeyEngine</title>
+    <meta charset="utf-8">
+    <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet" integrity="sha384-wvfXpqpZZVQGK6TAh5PVlGOfQNHSoD2xbE+QkPxCAFlNEevoEH3Sl0sibVcOQVnN"
+        crossorigin="anonymous">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prefixfree/1.0.7/prefixfree.min.js" crossorigin="anonymous"></script>
+    <link href="https://fonts.googleapis.com/css?family=Zilla+Slab" rel="stylesheet">
+    <script src="https://code.jquery.com/jquery-3.2.1.min.js" integrity="sha256-hwg4gsxgFZhOsEEamdOYGBf13FyQuiTwlAQgxVSNgt4="
+        crossorigin="anonymous"></script>
+    <style>
+        footer {
+            text-align: center;
+            font-size: 0.8em;
+        }
+
+        .panel h2:first-child {
+            margin-top: 0;
+        }
+
+        .panel h2 {
+            margin-top: 2em;
+        }
+
+        header h1 {
+            position: relative;
+            text-align: center;
+        }
+
+        body {
+            background-color: #424242;
+            color: #b2b2b2;
+            font-family: 'Zilla Slab', serif;
+            font-size: 1.1em;
+        }
+
+        #loading {
+            display: none;
+            text-align: center;
+        }
+
+        #loading i {
+            font-size: 5em;
+        }
+
+        #latest {
+            user-select: none;
+
+            margin-left: 1em;
+            border-radius: 0.5em;
+            font-size: 0.6em;
+            font-weight: bold;
+            display: inline-block;
+            padding: 0.3em;
+            background-color: #84e57b;
+            text-transform: uppercase;
+            color: #000;
+            border: 0.2em solid black;
+        }
+
+        .panel {
+            width: 80%;
+            position: relative;
+            margin: auto;
+            background-color: #5b5b5b;
+            border-radius: 0.5em;
+            padding: 1em;
+            border: 0.1em solid #b2b2b2;
+
+            box-shadow: 0px 0px 0.1em 0px rgba(178, 178, 178, 1);
+            margin-bottom: 2em;
+        }
+
+        #releases .name {
+            font-weight: bold;
+            color: #d1b101;
+            padding-right: 1em;
+            margin-bottom: 0.5em;
+            margin-bottom: 0.5em;
+        }
+
+
+        #releases .name span {
+            padding-right: 0.5em;
+        }
+
+        #releases .name .status.ok {
+            color: #01d121;
+        }
+
+        #releases .name .status.failed {
+            color: #d10d02;
+        }
+
+        #releases .release .version_name {
+            display: inline-block;
+            margin-right: 2.5em;
+        }
+
+        #releases .release .version_name span {
+            user-select: all;
+            color: #d1b101;
+        }
+
+
+
+        #releases .release .version {
+            display: block;
+            padding-bottom: 1em;
+            padding-top: 1em;
+            border-bottom: 0.1em solid #d1b101;
+            padding: 0.5em;
+        }
+
+
+        a,
+        a:hover,
+        a:visited {
+            text-decoration: underline;
+
+            color: #93b9e2;
+        }
+
+
+        #releases .release .repo {
+            font-size: 0.8em;
+            padding-top: 1em;
+
+            display: block;
+        }
+
+        #releases .release .repo .branch {
+            display: inline-block;
+            text-decoration: none;
+            color: #5998db;
+
+            padding-left: 0.5em;
+        }
+
+
+        pre {
+
+            user-select: all;
+            white-space: pre-wrap;
+            background-color: #2d1102;
+            color: #a57156;
+            border-radius: 0.5em;
+            font-size: 0.8em;
+            padding: 0.5em;
+            font-family: monospace;
+        }
+
+        #releases .release .gradle {
+            position: relative;
+            display: block;
+            float: right;
+            max-width: 50%;
+
+            user-select: all;
+        }
+
+
+        #releases .release .show_debug_lbl {
+            font-size: 0.8em;
+            font-family: monospace;
+
+            user-select: none;
+            padding: 1em;
+            display: inline-block;
+        }
+
+        #releases .release .show_debug {
+            opacity: 0;
+            position: absolute;
+        }
+
+        #releases .release .show_debug:checked+label {
+
+            font-weight: bold;
+        }
+
+        #releases .release .show_debug:checked+label:before {
+
+            content: '\f0d8';
+        }
+
+        #releases .release .show_debug+label:before {
+            font-family: FontAwesome;
+            margin-right: 1em;
+            display: inline-block;
+
+            content: '\f0d7';
+        }
+
+
+
+        #releases .release .show_debug:checked~div.debug {
+            display: block;
+        }
+
+        #releases .release .debug {
+            display: none;
+        }
+
+        #releases .release {
+            border: 0.1em solid #d1b101;
+            border-radius: 0.5em;
+            display: block;
+        }
+    </style>
+    <script>
+        var RELEASES = [];
+        var LOCK = -1;
+        var RENDER_LOOP = undefined;
+
+        function render() {
+
+            if (LOCK != 0) {
+                if (LOCK != -1) console.log("Wait for ", LOCK, "releases to be parsed");
+                return;
+            }
+            console.log("Render");
+            clearInterval(RENDER_LOOP);
+            var latest = true;
+            $("#releases_container").empty();
+            for (var i = 0; i < RELEASES.length; i++) {
+                var release = RELEASES[i];
+
+                var container = $("<div class='release'></div>");
+                container.attr("id", release.name);
+
+                var production = $("<div class='prod'></div>");
+                production.attr("id", release.name + "_prod");
+
+                var debug = $("<div class='debug'></div>");
+                debug.attr("id", release.name + "_debug");
+
+                if (release.status === 'ok') {
+                    for (var l = 0; l < 2; l++) {
+                        var r = release[l == 0 ? "prod" : "debug"];
+                        for (var k = 0; k < r.length; k++) {
+                            var x = l == 0 ? production : debug;
+                            x.append("<div class='version'><span class='version_name'>Version: <span>" + r[k].version
+                                + "</span></span><pre class='gradle'>org.jmonkeyengine.bullet_builder:jme3-bullet-native:" + r[k].version + "</pre>" +
+                                "  <span class='repo '>Built from: <a target='_blank' href='" + r[k].repo + "'>" + r[k].repo + "</a><span class='branch'> " + r[k].branch + "</span></span></div>");
+                        }
+                    }
+                    container.append(production);
+                    container.append(' <input type="checkbox" class="show_debug" id="show_debug' + release.name + '" />'
+                        + '<label for="show_debug' + release.name + '" class="show_debug_lbl">Show/Hide debug versions (!!!Warning!!!: Don\'t use in production!)</label>')
+                    container.append(debug);
+                }
+
+                var releasecnt = $("<div id='releases' class='panel'></div>");
+                releasecnt.append("<div class='name'><span>Build: "
+                    + release.name + "</span><a target='_blank' href='https://travis-ci.org/riccardobl/jme3-bullet-builder/builds'>" +
+                    (release.status === 'ok' ? '<i class="status ' + release.status + ' fa fa-check" aria-hidden="true"></i>' : release.status === 'building'
+                        ? '<i class="status ' + release.status + '   fa fa-spinner fa-spin " aria-hidden="true"></i>' : '<i class="status ' + release.status + ' fa fa-exclamation-triangle" aria-hidden="true"></i>'
+                    ) + "</a>" +
+                    (release.status == 'ok' && latest ? '<div id="latest" >Latest</div>' : "")
+                );
+                if (release.status == 'ok' && latest) latest = false;
+                releasecnt.append(container);
+
+                $("#releases_container").append(releasecnt);
+            }
+            $("#loading").css({ 'display': 'none' });
+
+        }
+        var FIRST_LOAD = true;
+        function reloadReleases() {
+            RELEASES = [];
+            LOCK = -1;
+            console.log("Reload releases");
+            if (FIRST_LOAD) {
+                $("#loading").css({ 'display': 'block' });
+                FIRST_LOAD = false;
+            }
+            RENDER_LOOP = setInterval(render, 100);
+            $.ajax({
+                dataType: "json",
+                url: 'https://api.github.com/repos/riccardobl/jme3-bullet-builder/releases',
+                error: function (err) {
+                    console.error(err);
+                },
+                success: function (releases) {
+
+                    if (releases) {
+                        LOCK = releases.length;
+                        for (var i = 0; i < releases.length; i++) {
+                            var release = releases[i];
+                            var tag_name = releases[i]["tag_name"];
+
+                            if(tag_name==='jmonkeyengine-master-3.2c'){ // Workaround ignore old releases
+                                LOCK=0;
+                                break;
+                            }
+
+                            if (releases[i]["target_commitish"] === "master") {
+                                var parsed_release = { name: tag_name, debug: [], prod: [], status: "building" };
+                                RELEASES.push(parsed_release);
+                                var ready = false;
+                                for (var j = 0; j < releases[i]["assets"].length; j++) {
+                                    if (releases[i]["assets"][j]["name"] === "deploy_list.txt") {
+                                        parsed_release.status = "ok";
+                                        ready = true;
+                                        var build_list_url = "https://raw.githubusercontent.com/riccardobl/jme3-bullet-builder/" + tag_name + "/buildlist.sh"
+                                        $.ajax({
+                                            url: build_list_url,
+                                            error: function (err) {
+                                                console.error(err);
+                                            },
+                                            success: function (data) {
+                                                if (data) {
+                                                    var versions = data.split("\n");
+                                                    for (var k = 0; k < versions.length; k++) {
+                                                        var version = versions[k].trim();
+                                                        if (version.endsWith('"') && version.startsWith('"')) {
+                                                            var vpart = version.split(",");
+                                                            version = vpart[0].substring(1) + "-" + tag_name;
+                                                            var debug = vpart[2] === "1";
+                                                            if (debug) version += "-debug";
+                                                            console.log("Found version ", version);
+                                                            var branch = vpart[1];
+                                                            var repo = vpart[3];
+                                                            repo = repo.substring(0, repo.length - 1);
+                                                            var a = debug ? parsed_release.debug : parsed_release.prod;
+                                                            a.push({
+                                                                "version": version,
+                                                                "branch": branch,
+                                                                "repo": repo
+                                                            });
+                                                        }
+                                                    }
+                                                    LOCK--;
+                                                }
+                                            }
+                                        });
+                                        break;
+                                    }
+                                }
+                                if (!ready) {
+                                    var today = new Date();
+                                    var published_at = new Date(releases[i]["published_at"]);
+                                    if (today.getTime() - published_at.getTime() > 1000 * 60 * 60 * 24) {
+                                        parsed_release.status = "failed";
+                                    }
+                                    LOCK--;
+                                }
+                            } else LOCK--;
+                        }
+                    }
+                }
+            });
+        }
+
+        function main() {
+            setInterval(reloadReleases, 10000);
+            reloadReleases();
+        }
+    </script>
+</head>
+
+<body onload="main()">
+    <header>
+        <h1>JME3 Bullet builder: Automatic up to date builds of bullet for JMonkeyEngine</h1>
+    </header>
+    <main>
+        <div class='panel'>
+            <h2>Usage with gradle</h2>
+            1. Add the following repository
+            <pre>
+
+    repositories {
+        maven {
+            url "<a target='_blank' href='http://dl.bintray.com/riccardo/jme3-bullet-native'>http://dl.bintray.com/riccardo/jme3-bullet-native</a>"
+        }
+    }
+        </pre> 2. Replace your <i>jme3-bullet-native</i> dependency with
+            <pre>
+
+    compile "org.jmonkeyengine.bullet_builder:jme3-bullet-native:$VERSION"
+        </pre> 3. Replace <i>$VERSION</i> in the string above with one version chosen from the list below
+            <br /><i>
+        (Note: <b>jmonkeyengine-master-*</b> are built from the official master branch)</i>
+
+            <h2>More links</h2>
+            Github repo <a href='https://github.com/riccardobl/jme3-bullet-builder'>https://github.com/riccardobl/jme3-bullet-builder</a>
+            <br /> Bintray repo <a href='https://bintray.com/riccardo/jme3-bullet-native/jme3-bullet-native'>https://bintray.com/riccardo/jme3-bullet-native/jme3-bullet-native</a>
+
+        </div>
+        <div class='panel' id='loading'>
+            <i class="   fa fa-spinner fa-spin " aria-hidden="true"></i>
+        </div>
+        <noscript>
+            <div class='panel'>
+                <h2>Error: Can't load releases: Javascript is not enable.</h2>
+                You can get the releases from here <a target="_blank" href='https://github.com/riccardobl/jme3-bullet-builder/releases'>https://github.com/riccardobl/jme3-bullet-builder/releases</a>
+                <br /> To see all the available versions for a release, download and open the attached deploy_list.txt.
+            </div>
+        </noscript>
+        <div id="releases_container">
+        </div>
+    </main>
+    <footer>Author: Riccardo Balbo || See <a target="_blank" href='https://github.com/riccardobl/jme3-bullet-builder/blob/master/LICENSE'>here</a> for
+        licenses</footer>
+</body>
+</html>
