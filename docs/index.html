@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en-US">
+
 <head>
     <title>JME3 Bullet builder: Automatic up to date builds of bullet for JMonkeyEngine</title>
     <meta charset="utf-8">
@@ -211,11 +212,10 @@
     </style>
     <script>
         var RELEASES = [];
-        var LOCK = -1;
+        var LOCK = -2;
         var RENDER_LOOP = undefined;
 
         function render() {
-
             if (LOCK != 0) {
                 if (LOCK != -1) console.log("Wait for ", LOCK, "releases to be parsed");
                 return;
@@ -226,6 +226,7 @@
             $("#releases_container").empty();
             for (var i = 0; i < RELEASES.length; i++) {
                 var release = RELEASES[i];
+                console.log("Render ", release);
 
                 var container = $("<div class='release'></div>");
                 container.attr("id", release.name);
@@ -266,10 +267,12 @@
                 $("#releases_container").append(releasecnt);
             }
             $("#loading").css({ 'display': 'none' });
+            LOCK = -2;
 
         }
         var FIRST_LOAD = true;
         function reloadReleases() {
+            if (LOCK != -2) return;
             RELEASES = [];
             LOCK = -1;
             console.log("Reload releases");
@@ -279,6 +282,7 @@
             }
             RENDER_LOOP = setInterval(render, 100);
             $.ajax({
+                async: true,
                 dataType: "json",
                 url: 'https://api.github.com/repos/riccardobl/jme3-bullet-builder/releases',
                 error: function (err) {
@@ -288,44 +292,51 @@
 
                     if (releases) {
                         LOCK = releases.length;
+                        console.log("Wait ", LOCK);
                         for (var i = 0; i < releases.length; i++) {
                             var release = releases[i];
                             var tag_name = releases[i]["tag_name"];
 
-                            if(tag_name==='jmonkeyengine-master-3.2c'){ // Workaround ignore old releases
-                                LOCK=0;
+                            if (tag_name === 'jmonkeyengine-master-3.2c') { // Workaround ignore old releases
+                                LOCK -= releases.length - i;
+                                console.log("Break ");
                                 break;
                             }
 
                             if (releases[i]["target_commitish"] === "master") {
+                                var ready = false;
                                 var parsed_release = { name: tag_name, debug: [], prod: [], status: "building" };
                                 RELEASES.push(parsed_release);
-                                var ready = false;
+                                var release_id = RELEASES.length - 1;
                                 for (var j = 0; j < releases[i]["assets"].length; j++) {
                                     if (releases[i]["assets"][j]["name"] === "deploy_list.txt") {
                                         parsed_release.status = "ok";
                                         ready = true;
                                         var build_list_url = "https://raw.githubusercontent.com/riccardobl/jme3-bullet-builder/" + tag_name + "/buildlist.sh"
                                         $.ajax({
+                                            rel_id: release_id,
+                                            tag_name: tag_name,
+                                            async: true,
                                             url: build_list_url,
                                             error: function (err) {
                                                 console.error(err);
                                             },
                                             success: function (data) {
                                                 if (data) {
+                                                    var rel = RELEASES[this.rel_id];
                                                     var versions = data.split("\n");
                                                     for (var k = 0; k < versions.length; k++) {
                                                         var version = versions[k].trim();
                                                         if (version.endsWith('"') && version.startsWith('"')) {
                                                             var vpart = version.split(",");
-                                                            version = vpart[0].substring(1) + "-" + tag_name;
+                                                            version = vpart[0].substring(1) + "-" + this.tag_name;
                                                             var debug = vpart[2] === "1";
                                                             if (debug) version += "-debug";
                                                             console.log("Found version ", version);
                                                             var branch = vpart[1];
                                                             var repo = vpart[3];
                                                             repo = repo.substring(0, repo.length - 1);
-                                                            var a = debug ? parsed_release.debug : parsed_release.prod;
+                                                            var a = debug ? rel.debug : rel.prod;
                                                             a.push({
                                                                 "version": version,
                                                                 "branch": branch,
@@ -334,6 +345,8 @@
                                                         }
                                                     }
                                                     LOCK--;
+                                                    console.log("Wait [1] ", LOCK);
+
                                                 }
                                             }
                                         });
@@ -347,8 +360,14 @@
                                         parsed_release.status = "failed";
                                     }
                                     LOCK--;
+                                    console.log("Wait [2]", LOCK);
+
                                 }
-                            } else LOCK--;
+                            } else {
+                                LOCK--;
+                                console.log("Wait [3] ", LOCK);
+
+                            }
                         }
                     }
                 }
@@ -403,7 +422,8 @@
         <div id="releases_container">
         </div>
     </main>
-    <footer>Author: Riccardo Balbo || See <a target="_blank" href='https://github.com/riccardobl/jme3-bullet-builder/blob/master/LICENSE'>here</a> for
-        licenses</footer>
+    <footer>Author: Riccardo Balbo || See <a target="_blank" href='https://github.com/riccardobl/jme3-bullet-builder/blob/master/LICENSE'>here</a>        for licenses
+    </footer>
 </body>
+
 </html>
