@@ -7,7 +7,7 @@ os:
 notifications:
   email: true
 script:
-- ./make.sh 
+- "./make.sh"
 before_install:
 - if [ "$TRAVIS_OS_NAME" = "linux" ]; then sudo apt-get -qq update ; fi
 - if [ "$TRAVIS_OS_NAME" = "linux" ]; then sudo apt-get install -y wget unzip  ".*-mingw-w64-.*"
@@ -17,11 +17,18 @@ before_install:
 - if [ "$TRAVIS_OS_NAME" = "osx" ]; then  brew cask install java ; fi
 - if [ "$TRAVIS_OS_NAME" = "osx" ]; then  brew install md5sha1sum ; fi
 after_success:
-- ./make.sh deploy
+- "./make.sh deploy"
 env:
   global:
-  - BUILD_WINDOWS: "true"
-  - BUILD_LINUX: "true"
-  - BUILD_MAC: "true"
+  - BUILD_WINDOWS: 'true'
+  - BUILD_LINUX: 'true'
+  - BUILD_MAC: 'true'
   - BINTRAY_USER: riccardo
   - secure: svG4ATHGZ85Zo3PnKAw9kHPGVOylwmNjR62YtuY3EUZH2GKE66+EYYdHxnk0FTBo1bG+lpPFpOllMF42M7zGkz8tWsvWHZp+dkq50ORly6C8c7waHsEXOmb2DyN5R4gcYiT1l8kv9MS2mvAogw7fI77qhqoh1Bt5/YbsYAJlnWLrIDYgYV+ZDBPbqtzHxM2ngPeU/FmD4QHhO/6pB5AzDjFoj5BkenwtE2NaaJRRGMn+Mu8JHXMjHVk5nf62ec4BWKhgIyoa2UHHOXb8u4+NV8QlSUyMIY9U4XX536Nj5xJo4vNwAsI0HE6br+PBEPseCQ7kbURbVD8bM1hqRJQ964iluN8mzqDzNlbxNuJkX8AFzXaa2RaZ4V1sHZuMAI6YyjF4Deg4VIrR/oKi5P6rHWqD02VGLpcj1JwumoBxAQpKDSNISxhWqNwEh4hXsTt7AkL8cYj02hyIihl9hhHgUz8OsJthtzTVj3lSLvTqeq7w+QME7RrAlk8/T6hcW53Q5TEE4ehC3vPPFFrEriIKC8N1CROTGdE3EeLoYmssbiUkIL8sFSeGB7HoRlP/lcqzM2t58+h/5XwolpdIpS4UIQd3s1jslIs1NbL3DgTnxqvomK4DO0tZv+X85fHQLHljh6+CvwGSwD2DzuF5j84F2UqeBNLOZIrz52IRBWTintc=
+deploy:
+  provider: releases
+  api_key:
+    secure: OjkMqig0/0ZvEMQLaQTGohIcreeI4CwOecynJdpJkbldz4SaTw4XbqOreNMuXQSqQQE1TEiJVPJsNWzGU1efSUIaPdK1Rzg/5DJTvt19CV7+sdslmwBQLXtpb9lkCQxlBlrxwVrV9jukNSigcQerlB3ARjM/H9Qz/3jzmf/vX+v8WWqVFndyoJYU7k5L8SkoVcGzcYg2mkFVlLt0WG682ybs0bCkOJ9wzW1FpT3gTqDZfhR4sXKppuCtee578b05rqOolVSN3piGtV65ykxxzJPJMu80gMokeuGx3+lhaxE40+A4EIPH6Pg2sCy/3ViGbYBSeTV0ac23htOCv2stmiVNxp4f85+opRV2iWw2Mc8Cxyt2J9hXLi8zfIZIPIzRCEO6ipX/Ikt3vMKc4tUbyCLs8BP7pAuwXZbUbHN3gdkTwsU2D5MlXlq7823QLaZOe/4f8o3JdUA0jR3vNsxllLDaPC7C2nbO9dfaBwdH9gbXSUK1ItkIkdEnid+jiHAzEbzR1tyo/gJQe7iW5YJ1Wl27rcQOIRXxuxELPqKum1fcoCA+nY4OcTa+B4W1qoSZzuuxTmyD5ZCIXwJ0mEo2z4Q5N8ynFtOjnJYBT1Sr9AAgge2jH8aWv6jairJGy8x85GrGvqDleKHXiYjZ+pHKfbT/SM0/SSc33qbq786+kE8=
+  file: "deploy/deploy_list.txt"
+  on:
+    tags: true

@@ -365,6 +365,9 @@ function main {
         # Merge both builds together
         tar -xzf deploy/tmpl.tar.gz -C build/lib/
         tar -xzf deploy/tmpm.tar.gz -C build/lib/
+
+        echo "" > deploy/deploy_list.txt
+
         #Build jar
         for target in "${BUILD_LIST[@]}"
         do
@@ -377,6 +380,9 @@ function main {
             then
                 export SUB_VERSION="$SUB_VERSION-debug"
             fi
+            
+            echo "$SUB_VERSION" >> deploy/deploy_list.txt
+
 
             if [ "$BINTRAY_USER" = "" ];
             then
