@@ -68,9 +68,7 @@ function findCppFiles { #Find .cpp and header paths that need to be passed to g+
 
 
     # For <=2.82
-    find  build/tmp/bullet/src/BulletSoftBody -type f -name '*.cpp' >> build/tmp/cpplist.txt
     find  build/tmp/bullet/src/vectormath -type f -name '*.cpp' >> build/tmp/cpplist.txt
-    find  build/tmp/bullet/src/BulletSoftBody -type d  >> build/tmp/Ilist.txt
     find  build/tmp/bullet/src/vectormath -type d  >> build/tmp/Ilist.txt
     
     for line in $(cat  build/tmp/Ilist.txt); do
