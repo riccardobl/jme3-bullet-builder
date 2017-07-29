@@ -33,4 +33,4 @@ deploy:
   file: "deploy/deploy_list.txt"
   on:
     tags: true
-    condition: "$DEPLOY = 2"
+    condition: "-f deploy/deploy_list.txt"
