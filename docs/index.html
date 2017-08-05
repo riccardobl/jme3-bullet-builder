@@ -283,6 +283,7 @@
             RENDER_LOOP = setInterval(render, 100);
             $.ajax({
                 async: true,
+                cache: false,
                 dataType: "json",
                 url: 'https://api.github.com/repos/riccardobl/jme3-bullet-builder/releases',
                 error: function (err) {
@@ -314,6 +315,7 @@
                                         ready = true;
                                         var build_list_url = "https://raw.githubusercontent.com/riccardobl/jme3-bullet-builder/" + tag_name + "/buildlist.sh"
                                         $.ajax({
+                                            cache: false,
                                             rel_id: release_id,
                                             tag_name: tag_name,
                                             async: true,
