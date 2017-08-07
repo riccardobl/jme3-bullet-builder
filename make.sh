@@ -117,7 +117,7 @@ function buildLinux {
     fi
     findCppFiles
     
-    args="-Ofast "
+    args="-O3"
     if [ "$DEBUG" == "1" ];
     then
         args="-g -O1"
