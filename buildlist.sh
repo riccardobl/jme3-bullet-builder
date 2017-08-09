@@ -7,4 +7,7 @@ export BUILD_LIST=(
     "riccardobl-frk,frk,1,https://github.com/riccardobl/jmonkeyengine.git"
     "test-bullet2_86,bullet2_86,0,https://github.com/riccardobl/jmonkeyengine.git"
     "test-bullet2_86,bullet2_86,1,https://github.com/riccardobl/jmonkeyengine.git"
+    "test-fixd688fa1,fixd688fa1,0,https://github.com/riccardobl/jmonkeyengine.git"
+    "test-fixd688fa1,fixd688fa1,1,https://github.com/riccardobl/jmonkeyengine.git"
+
 )
