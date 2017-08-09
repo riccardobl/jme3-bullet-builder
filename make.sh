@@ -117,14 +117,24 @@ function buildLinux {
     fi
     findCppFiles
     
-    args="-O3"
+    args="-O2 -fno-rtti"
     if [ "$DEBUG" == "1" ];
     then
         args="-g -O1"
     fi
     
     build_script="
-    g++ -mtune=generic -DBT_NO_PROFILE=1 -fpermissive -U_FORTIFY_SOURCE $args  -fPIC  $arch_flag -shared
+    g++ -mtune=generic  \
+    -mfpmath=sse \
+    -msse \
+    -fmessage-length=0 \
+    -DBT_NO_PROFILE=1 \
+    -fpermissive \
+    -fno-strict-aliasing \
+    -fPIC \
+    -Wall \
+    -D_FORTIFY_SOURCE=0 \
+    $args   $arch_flag -shared
     -Ibuild/tmp/bullet/src/
     -I$JDK_ROOT/include
     -I$JDK_ROOT/include/linux
@@ -150,7 +160,7 @@ function buildWindows {
     fi
     findCppFiles
     
-    args="-Ofast "
+    args="-O2 -fno-rtti"
     if [ "$DEBUG" == "1" ];
     then
         args="-g -O1"
@@ -158,7 +168,17 @@ function buildWindows {
     
     
     build_script="
-    $compiler $arch_flag -mtune=generic -DBT_NO_PROFILE=1 -fpermissive -fPIC   -U_FORTIFY_SOURCE $args  -DWIN32  -shared
+    $compiler $arch_flag -mtune=generic \
+     -mfpmath=sse \
+    -msse \
+    -fmessage-length=0 \
+    -DBT_NO_PROFILE=1 \
+    -fpermissive \
+    -fno-strict-aliasing \
+    -fPIC \
+    -Wall \
+    -D_FORTIFY_SOURCE=0 \
+    $args  -DWIN32  -shared
     -Ibuild/tmp/bullet/src/
     -I$JDK_ROOT/include
     -Ibuild/tmp/win
@@ -181,14 +201,25 @@ function buildMac {
     fi
     findCppFiles
     
-    args="-Ofast "
+    args="-O2 -fno-rtti"
     if [ "$DEBUG" == "1" ];
     then
         args="-g -O1"
     fi
     
     build_script="
-    g++ -mtune=generic -DBT_NO_PROFILE=1 -fpermissive $arch_flag -U_FORTIFY_SOURCE -fPIC $args   -shared
+    g++ -mtune=generic \
+    -mmacosx-version-min=10.5 \
+    -DFIXED_POINT \
+    -fmessage-length=0 \
+    -DBT_NO_PROFILE=1 \
+    -fpermissive \
+    -fno-strict-aliasing \
+    -fPIC \
+    -Wall \
+    -D_FORTIFY_SOURCE=0 \
+    $arch_flag \
+    $args   -shared
     -Ibuild/tmp/bullet/src/
     -Ibuild/tmp/$REPO_HASH/jme3-bullet-native/src/native/cpp
     -I$JDK_ROOT/Headers/
