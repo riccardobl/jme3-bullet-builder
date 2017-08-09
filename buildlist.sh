@@ -5,6 +5,4 @@ export BUILD_LIST=(
     "jmonkeyengine-master,master,1,https://github.com/jMonkeyEngine/jmonkeyengine.git"
     "riccardobl-frk,frk,0,https://github.com/riccardobl/jmonkeyengine.git"
     "riccardobl-frk,frk,1,https://github.com/riccardobl/jmonkeyengine.git"
-    "test-fixd688fa1,fixd688fa1,0,https://github.com/riccardobl/jmonkeyengine.git"
-    "test-fixd688fa1,fixd688fa1,1,https://github.com/riccardobl/jmonkeyengine.git"
 )
