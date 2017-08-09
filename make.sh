@@ -133,7 +133,6 @@ function buildLinux {
     -fno-strict-aliasing \
     -fPIC \
     -Wall \
-    -D_FORTIFY_SOURCE=0 \
     $args   $arch_flag -shared
     -Ibuild/tmp/bullet/src/
     -I$JDK_ROOT/include
@@ -177,7 +176,6 @@ function buildWindows {
     -fno-strict-aliasing \
     -fPIC \
     -Wall \
-    -D_FORTIFY_SOURCE=0 \
     $args  -DWIN32  -shared
     -Ibuild/tmp/bullet/src/
     -I$JDK_ROOT/include
@@ -217,7 +215,6 @@ function buildMac {
     -fno-strict-aliasing \
     -fPIC \
     -Wall \
-    -D_FORTIFY_SOURCE=0 \
     $arch_flag \
     $args   -shared
     -Ibuild/tmp/bullet/src/
