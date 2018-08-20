@@ -118,9 +118,12 @@ function buildLinux {
     findCppFiles
     
     args="-O2 -fno-rtti"
-    if [ "$DEBUG" == "1" ];
+    if [ "$MODE" == "1" ];
     then
         args="-g -O1"
+    elif [ "$MODE" == "2" ];
+    then
+        args="$args -DBT_THREADSAFE=1"
     fi
     
     build_script="
@@ -160,9 +163,12 @@ function buildWindows {
     findCppFiles
     
     args="-O2 -fno-rtti"
-    if [ "$DEBUG" == "1" ];
+    if [ "$MODE" == "1" ];
     then
         args="-g -O1"
+    elif [ "$MODE" == "2" ];
+    then
+        args="$args -DBT_THREADSAFE=1"
     fi
     
     
@@ -200,9 +206,12 @@ function buildMac {
     findCppFiles
     
     args="-O2 -fno-rtti"
-    if [ "$DEBUG" == "1" ];
+    if [ "$MODE" == "1" ];
     then
         args="-g -O1"
+    elif [ "$MODE" == "2" ];
+    then
+        args="$args -DBT_THREADSAFE=1"
     fi
     
     build_script="
@@ -278,12 +287,15 @@ function main {
         do
             IFS=',' read -a target <<< "$target"
 
-            export DEBUG=${target[2]}
+            export MODE=${target[2]}
             export SUB_VERSION="${target[0]}-$VERSION"
             export REPO_HASH=`echo "${target[3]}" | md5sum | cut -f1 -d' '`
-            if [ "$DEBUG" = "1" ];
+            if [ "$MODE" = "1" ];
             then
                 export SUB_VERSION="$SUB_VERSION-debug"
+            elif [ "$MODE" = "2" ];
+            then
+                export SUB_VERSION="$SUB_VERSION-threadsafe"
             fi
             
             if [ ! -d "build/$REPO_HASH" ]; then
@@ -297,7 +309,10 @@ function main {
                 cd build/$REPO_HASH
                 git checkout ${target[1]}
                 git fetch origin 
-                git reset --hard origin/${target[1]}
+                if [ "$NO_GIT_RESET" == "" ];
+                then 
+                    git reset --hard origin/${target[1]}
+                fi
                 cd ../../
             fi
 
@@ -440,12 +455,15 @@ function main {
         do
             IFS=',' read -a target <<< "$target"
 
-            export DEBUG=${target[2]}
+            export MODE=${target[2]}
             export SUB_VERSION="${target[0]}-$VERSION"
             
-            if [ "$DEBUG" = "1" ];
+            if [ "$MODE" = "1" ];
             then
                 export SUB_VERSION="$SUB_VERSION-debug"
+            elif [ "$MODE" == "2" ];
+            then
+                export SUB_VERSION="$SUB_VERSION-threadsafe"
             fi
             
             echo "$SUB_VERSION" >> deploy/deploy_list.txt

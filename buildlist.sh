@@ -5,4 +5,6 @@ export BUILD_LIST=(
     "jmonkeyengine-master,master,1,https://github.com/jMonkeyEngine/jmonkeyengine.git"
     "riccardobl-frk,frk,0,https://github.com/riccardobl/jmonkeyengine.git"
     "riccardobl-frk,frk,1,https://github.com/riccardobl/jmonkeyengine.git"
+    "riccardobl-frk,frk,2,https://github.com/riccardobl/jmonkeyengine.git"
+
 )
