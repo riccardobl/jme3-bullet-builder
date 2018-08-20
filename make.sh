@@ -216,7 +216,7 @@ function buildMac {
     
     build_script="
     clang++ -stdlib=libc++ -mtune=generic \
-    -mmacosx-version-min=10.5 \
+    -mmacosx-version-min=10.7 \
     -DFIXED_POINT \
     -fmessage-length=0 \
     -DBT_NO_PROFILE=1 \
