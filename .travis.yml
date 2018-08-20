@@ -16,6 +16,7 @@ before_install:
 - if [ "$TRAVIS_OS_NAME" = "osx" ]; then  brew tap caskroom/cask ; fi
 - if [ "$TRAVIS_OS_NAME" = "osx" ]; then  brew cask install java ; fi
 - if [ "$TRAVIS_OS_NAME" = "osx" ]; then  brew install md5sha1sum ; fi
+- if [ "$TRAVIS_OS_NAME" = "osx" ]; then  brew install llvm --with-clang --with-asan ; fi
 after_success:
 - "./make.sh deploy"
 env:

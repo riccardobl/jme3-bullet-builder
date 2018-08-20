@@ -123,7 +123,7 @@ function buildLinux {
         args="-g -O1"
     elif [ "$MODE" == "2" ];
     then
-        args="$args -DBT_THREADSAFE=1"
+        args="$args -DBT_THREADSAFE=1   --std=c++11 -lpthread"
     fi
     
     build_script="
@@ -168,7 +168,7 @@ function buildWindows {
         args="-g -O1"
     elif [ "$MODE" == "2" ];
     then
-        args="$args -DBT_THREADSAFE=1"
+        args="$args -DBT_THREADSAFE=1  --std=c++11"
     fi
     
     
@@ -211,11 +211,11 @@ function buildMac {
         args="-g -O1"
     elif [ "$MODE" == "2" ];
     then
-        args="$args -DBT_THREADSAFE=1"
+        args="$args -DBT_THREADSAFE=1  --std=c++11 -lpthread"
     fi
     
     build_script="
-    g++ -mtune=generic \
+    clang++ -stdlib=libc++ -mtune=generic \
     -mmacosx-version-min=10.5 \
     -DFIXED_POINT \
     -fmessage-length=0 \
@@ -295,7 +295,7 @@ function main {
                 export SUB_VERSION="$SUB_VERSION-debug"
             elif [ "$MODE" = "2" ];
             then
-                export SUB_VERSION="$SUB_VERSION-threadsafe"
+                export SUB_VERSION="$SUB_VERSION-mt"
             fi
             
             if [ ! -d "build/$REPO_HASH" ]; then
@@ -307,10 +307,11 @@ function main {
             else
                 clr_green "Update engine ${target[3]}:${target[1]} -- $REPO_HASH..."
                 cd build/$REPO_HASH
-                git checkout ${target[1]}
-                git fetch origin 
+      
                 if [ "$NO_GIT_RESET" == "" ];
                 then 
+                    git checkout ${target[1]}
+                    git fetch origin 
                     git reset --hard origin/${target[1]}
                 fi
                 cd ../../
@@ -345,12 +346,18 @@ function main {
             then
                 if [ "$BUILD_LINUX" = "true" ];
                 then
-                    buildLinux "x86"
+                    if [ "$NO_32bit" == "" ]
+                    then
+                       buildLinux "x86"
+                    fi
                     buildLinux "x86_64"
                 fi
                 if [ "$BUILD_WINDOWS" = "true" ];
                 then
+                   if [ "$NO_32bit" == "" ]
+                    then
                     buildWindows "x86"
+                    fi
                     buildWindows "x86_64"
                 fi
             fi
@@ -360,7 +367,10 @@ function main {
                 OS="mac"
                 if [ "$BUILD_MAC" = "true" ];
                 then
+                   if [ "$NO_32bit" == "" ]
+                    then
                     buildMac "x86"
+                    fi
                     buildMac "x86_64"
                 fi
             fi
@@ -463,7 +473,7 @@ function main {
                 export SUB_VERSION="$SUB_VERSION-debug"
             elif [ "$MODE" == "2" ];
             then
-                export SUB_VERSION="$SUB_VERSION-threadsafe"
+                export SUB_VERSION="$SUB_VERSION-mt"
             fi
             
             echo "$SUB_VERSION" >> deploy/deploy_list.txt
@@ -495,4 +505,3 @@ function main {
 clr_magenta "Run with args ${*:1}..."
 main ${*:1}
 clr_magenta "Build complete, results are stored in $PWD/build/"
-
