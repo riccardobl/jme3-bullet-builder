@@ -110,6 +110,8 @@ function findCppFiles { #Find .cpp and header paths that need to be passed to g+
 function buildLinux {
     setPlatformArch "linux" $1
     clr_green "Compile for $PLATFORM $ARCH..."
+    clr_green "Using GCC"
+    gcc --version
     arch_flag="-m64"
     if [ "$1" = "x86" ];
     then
@@ -152,7 +154,7 @@ function buildLinux {
 function buildWindows {
     setPlatformArch "windows" $1
     clr_green "Compile for $PLATFORM $ARCH..."
-    compiler="x86_64-w64-mingw32-g++"
+    compiler="x86_64-w64-mingw32-g++"   
     arch_flag="-DWIN64"
     # "-m64"
     if [ "$1" = "x86" ];
@@ -160,6 +162,10 @@ function buildWindows {
         arch_flag=""
         compiler="i686-w64-mingw32-g++"
     fi
+    
+    clr_green "Using $compiler"
+    $compiler --version
+    
     findCppFiles
     
     args="-O2 -fno-rtti"
@@ -198,6 +204,8 @@ function buildWindows {
 function buildMac {
     setPlatformArch "osx" $1
     clr_green "Compile for $PLATFORM $ARCH..."
+    clr_green "Using clang"
+    clang++ --version
     arch_flag="-arch x86_64"
     if [ "$1" = "x86" ];
     then
