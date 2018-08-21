@@ -172,9 +172,9 @@ function buildWindows {
     if [ "$MODE" == "1" ];
     then
         args="-g -O1"
-    elif [ "$MODE" == "2" ];
-    then
-        args="$args -DBT_THREADSAFE=1  --std=c++11"
+    # elif [ "$MODE" == "2" ];
+    # then
+        #args="$args -DBT_THREADSAFE=1  --std=c++11"
     fi
     
     
