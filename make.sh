@@ -85,7 +85,7 @@ function findCppFiles { #Find .cpp and header paths that need to be passed to g+
     find  build/tmp/$REPO_HASH/jme3-bullet-native/src/native/cpp/ -type f -name '*.cpp' >> build/tmp/cpplist.txt
     find  build/tmp/bullet/src/Bullet3Common -type f -name '*.cpp' >> build/tmp/cpplist.txt
     
-    
+    echo "">build/tmp/Ilist.txt
     find  build/tmp/bullet/src/BulletCollision -type d  >> build/tmp/Ilist.txt
     find  build/tmp/bullet/src/BulletDynamics -type d  >> build/tmp/Ilist.txt
     find  build/tmp/bullet/src/BulletInverseDynamics -type d >> build/tmp/Ilist.txt
