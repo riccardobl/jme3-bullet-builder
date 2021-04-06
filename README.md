@@ -1,3 +1,5 @@
+# Archived: the official builds are now always up to date.
+
 # JMonkeyEngine Bullet builder
 Automatic build of [JMonkeyEngine bullet bindings](https://github.com/jMonkeyEngine/jmonkeyengine) with travis.
 
